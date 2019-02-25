@@ -6,9 +6,9 @@
 * Adopting code from Jason Davies's and Michele Weigle's Block
 */
 function plot_it()  {
-	var margin = {top: 100, right: 50, bottom: 100, left: 50},
+	var margin = {top: 50, right: 50, bottom: 100, left: 50},
     width = 960 - margin.left - margin.right,
-    height = 500 - margin.top - margin.bottom;
+    height = 415 - margin.top - margin.bottom;
 
  
 	var x = d3.scalePoint().range([0, width], 1),
