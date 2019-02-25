@@ -60,13 +60,13 @@ function plot_it()  {
 	      .data(dimensions)
 	    .enter().append("g")
 	      .attr("class", "dimension")
-	      .attr("transform", function(d) { return "translate(" + x(d) + ")"; })
-	      .call(d3.drag()
-	        .subject(function(d) { return {x: x(d)}; })
-	        .on("start", function(d) {
-	          dragging[d] = x(d);
-	          background.attr("visibility", "hidden");
-	        }));
+	      .attr("transform", function(d) { return "translate(" + x(d) + ")"; });
+	      // .call(d3.drag()
+	      //   .subject(function(d) { return {x: x(d)}; })
+	      //   .on("start", function(d) {
+	      //     dragging[d] = x(d);
+	      //     background.attr("visibility", "hidden");
+	      //   }));
 	  //       .on("drag", function(d) {
 	  //         dragging[d] = Math.min(width, Math.max(0, d3.event.x));
 	  //         foreground.attr("d", path);
@@ -92,9 +92,10 @@ function plot_it()  {
 		      .attr("class", "axis")
 		      .each(function(d) { d3.select(this).call(d3.axisLeft(y[d])); })
 		    .append("text")
+		    .attr("fill", "black")
 		      .style("text-anchor", "middle")
 		      .attr("y", -9)
-		      .text(function(d) { return d; });
+		      .text(function(d) { return d });
 
 			// // g.append("g")
 	  // //     .attr("class", "brush")
@@ -127,12 +128,12 @@ function plot_it()  {
 		    yAxis = d3.axisLeft().scale(yScale);
 
 		var cValue = function(d) { return d["cluster"];},
-		//const cValue = d => d["cluster"];
+		
     	color = d3.scaleOrdinal(d3.schemeCategory10).domain(d3.range(0,3));
 
 		xScale.domain([d3.min(pca_data, xValue)-4, d3.max(pca_data, xValue)+1]);
  		yScale.domain([d3.min(pca_data, yValue)-4, d3.max(pca_data, yValue)+1]);
- 		// x-axis
+
 	 
 
 	   svg2.selectAll(".dot")
