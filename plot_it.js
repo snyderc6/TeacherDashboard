@@ -49,10 +49,12 @@ function plot_it()  {
 	    .selectAll("path")
 	      .data(features_data)
 	    .enter().append("path")
-	      .attr("d", path)
-	     .attr({'style': function(d){return "stroke: " + color(cValue(d))}});
-	      
+	    .style("stroke", function(d){return color(cValue(d));})
+	      .attr("d", path);
 
+
+	     
+	   
 	  // Add a group element for each dimension.
 	  var g = svg1.selectAll(".dimension")
 	      .data(dimensions)
@@ -64,27 +66,28 @@ function plot_it()  {
 	        .on("start", function(d) {
 	          dragging[d] = x(d);
 	          background.attr("visibility", "hidden");
-	        })
-	        .on("drag", function(d) {
-	          dragging[d] = Math.min(width, Math.max(0, d3.event.x));
-	          foreground.attr("d", path);
-	          dimensions.sort(function(a, b) { return position(a) - position(b); });
-	          x.domain(dimensions);
-	          g.attr("transform", function(d) { return "translate(" + position(d) + ")"; })
-	        })
-	        .on("end", function(d) {
-	          delete dragging[d];
-	          transition(d3.select(this)).attr("transform", "translate(" + x(d) + ")");
-	          transition(foreground).attr("d", path);
-	          background
-	              .attr("d", path)
-	            .transition()
-	              .delay(500)
-	              .duration(0)
-	              .attr("visibility", null);
 	        }));
+	  //       .on("drag", function(d) {
+	  //         dragging[d] = Math.min(width, Math.max(0, d3.event.x));
+	  //         foreground.attr("d", path);
+	  //         dimensions.sort(function(a, b) { return position(a) - position(b); });
+	  //         x.domain(dimensions);
+	  //         g.attr("transform", function(d) { return "translate(" + position(d) + ")"; })
+	  //       })
+	  //       .on("end", function(d) {
+	  //         delete dragging[d];
+	  //         transition(d3.select(this)).attr("transform", "translate(" + x(d) + ")");
+	  //         transition(foreground).attr("d", path);
+	  //         background
+	  //             .attr("d", path)
+	  //           .transition()
+	  //             .delay(500)
+	  //             .duration(0)
+	  //             .attr("visibility", null);
+	  //       }));
 
 	   // Add an axis and title.
+
 		  g.append("g")
 		      .attr("class", "axis")
 		      .each(function(d) { d3.select(this).call(d3.axisLeft(y[d])); })
@@ -93,14 +96,14 @@ function plot_it()  {
 		      .attr("y", -9)
 		      .text(function(d) { return d; });
 
-			// g.append("g")
-	  //     .attr("class", "brush")
-	  //     .each(function(d) {
-	  //       d3.select(this).call(y[d].brush = d3.brushY().on("start", brushstart).on("brush", brush));
-	  //     })
-	  //   .selectAll("rect")
-	  //     .attr("x", -8)
-	  //     .attr("width", 16);
+			// // g.append("g")
+	  // //     .attr("class", "brush")
+	  // //     .each(function(d) {
+	  // //       d3.select(this).call(y[d].brush = d3.brushY().on("start", brushstart).on("brush", brush));
+	  // //     })
+	  // //   .selectAll("rect")
+	  // //     .attr("x", -8)
+	  // //     .attr("width", 16);
 
 		
 
@@ -182,66 +185,6 @@ function plot_it()  {
 	//     }) ? null : "none";
 	//   });
 	// }
-	// function brush() {
-
-	//     var actives = [];
-	//     svg1.selectAll(".axis .brush")
-	//       .filter(function(d) {
-	//         return d3.brushSelection(this);
-	//       })
-	//       .each(function(d) {
-	//         actives.push({
-	//           dimension: d,
-	//           extent: d3.brushSelection(this)
-	//         });
-	//       });
-
-	//     var selected = features_data.filter(function(d) {
-	//       if (actives.every(function(active) {
-	//           var dim = active.dimension;
-	//           // test if point is within extents for each active brush
-	//           return dim.type.within(d[dim.key], active.extent, dim);
-	//         })) {
-	//         return true;
-	//       }
-	//     });
-
- //    // show ticks for active brush dimensions
- //    // and filter ticks to only those within brush extents
-    
- //    svg1.selectAll(".axis")
- //        .filter(function(d) {
- //          return actives.indexOf(d) > -1 ? true : false;
- //        })
- //        .classed("active", true)
- //        .each(function(dimension, i) {
- //          var extent = extents[i];
- //          d3.select(this)
- //            .selectAll(".tick text")
- //            .style("display", function(d) {
- //              var value = dimension.type.coerce(d);
- //              return dimension.type.within(value, extent, dimension) ? null : "none";
- //            });
- //        });
-
- //    // reset dimensions without active brushes
- //    svg1.selectAll(".axis")
- //        .filter(function(d) {
- //          return actives.indexOf(d) > -1 ? false : true;
- //        })
- //        .classed("active", false)
- //        .selectAll(".tick text")
- //          .style("display", null);
-    
-
- //    //ctx.clearRect(0,0,width,height);
- //    //ctx.globalAlpha = d3.min([0.85/Math.pow(selected.length,0.3),1]);
- 
-
- //    //output.text(d3.tsvFormat(selected.slice(0,24)));
- //  }
-
-
 
 
 }
