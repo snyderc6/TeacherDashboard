@@ -28,6 +28,21 @@
 	  text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
 	  cursor: move;
 	}
+	bar {
+        fill: steelblue;
+    }
+	div.tooltip {	
+    position: absolute;			
+    text-align: center;			
+    width: 60px;					
+    height: 28px;					
+    padding: 2px;				
+    font: 12px sans-serif;		
+    background: lightsteelblue;	
+    border: 0px;		
+    border-radius: 8px;			
+    pointer-events: none;			
+	}
 </style>
 	<head>
 		<meta charset='utf-8'>
@@ -35,23 +50,31 @@
 		<script type='text/javascript' src='d3.js'></script>
 	</head>
 	<body>
-	<script type='text/javascript' src='plot_it.js'></script>
+	<script type='text/javascript' src='graph_it.js'></script>
 	<script type='text/javascript'>
-		d3.csv('chicago_actions.csv')
+		d3.csv('data/chicago_actions.csv')
 		  .then(function(a_data)  {
 			  actions_data = a_data;
 		  })
-		d3.csv('chicago_features.csv')
+		d3.csv('data/chicago_features.csv')
 		.then(function(f_data){
 			features_data = f_data;
 		})
-		d3.csv('chicago_labels.csv')
+		d3.csv('data/chicago_labels.csv')
 		.then(function(l_data){
 			labels_data = l_data;
 		})
-		d3.csv('chicago_pca_results.csv')
+		d3.csv('data/chicago_pca_results.csv')
 		.then(function(p_data){
 			pca_data = p_data;
+		})
+		d3.csv('data/features_transposed.csv')
+		.then(function(t_data){
+			t_features_data = t_data;
+		})
+		d3.csv('data/scores.csv')
+		.then(function(s_data){
+			scores_data = s_data;
 		})
 		.then(plot_it)
 	</script>
