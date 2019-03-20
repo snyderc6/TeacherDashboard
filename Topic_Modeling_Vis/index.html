@@ -1,0 +1,84 @@
+
+<!DOCTYPE html>
+<html lang='en'>
+<style>
+	svg {
+	  font: 10px sans-serif;
+	}
+	.background path {
+	  fill: none;
+	  stroke: #ddd;
+	  shape-rendering: crispEdges;
+	}
+	.foreground path {
+	  fill: none;
+	  stroke: steelblue;
+	}
+	.brush .extent {
+	  fill-opacity: .3;
+	  stroke: #fff;
+	  shape-rendering: crispEdges;
+	}
+	.axis line,
+	.axis path {
+	  fill: none;
+	  stroke: #000;
+	  shape-rendering: crispEdges;
+	}
+	.axis text {
+	  text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
+	  cursor: move;
+	}
+</style>
+<head>
+  <!-- Include Plotly.js file from CDN -->
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+<!-- DIV will be used for charts -->
+<div id="mapDiv"></div>
+  <script>
+  
+  	Plotly.d3.csv('data/chicago_actions.csv',function(a_data)  {
+			  actions_data = a_data;
+		  })
+  	users = actions_data[user]
+
+	var trace1 = {
+	  x: [20, 14, 23],
+	  y: ['giraffes', 'orangutans', 'monkeys'],
+	  name: 'SF Zoo',
+	  orientation: 'h',
+	  marker: {
+	    color: 'rgba(55,128,191,0.6)',
+	    width: 1
+	  },
+	  type: 'bar'
+	};
+
+	var trace2 = {
+	  x: [12, 18, 29],
+	  y: ['giraffes', 'orangutans', 'monkeys'],
+	  name: 'LA Zoo',
+	  orientation: 'h',
+	  type: 'bar',
+	  marker: {
+	    color: 'rgba(255,153,51,0.6)',
+	    width: 1
+	  }
+	};
+
+	var data = [trace1, trace2];
+
+	var layout = {
+ 	 title: 'Colored Bar Chart',
+ 	 barmode: 'stack'
+	};
+	Plotly.newPlot('mapDiv', data, layout);
+
+	
+  </script>
+</div>
+</body>
+</html>
+
