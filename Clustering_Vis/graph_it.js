@@ -180,72 +180,7 @@ function plot_it()  {
     var svg5 = d3.select("body").append("svg")
     	.attr("width", width + margin.left + margin.right)
     	.attr("height", height + margin.top + margin.bottom)
-	var actionColor = d3.scaleOrdinal()
-      .domain(["MODEL", "CREATE", "PLAY", "STOP", "STEP", "CHANGE", "None"])
-      .range(["#6600CC","#FF0000","#009933","#FF0000", "#0099FF", "#FF9900", "#FFFFFF"]);
-
-      var xValue = function(d) { return d['x'];}, 
-		    xScale = d3.scaleLinear().range([0, width]), 
-		    xMap = function(d) { return xScale(xValue(d));},
-		    xAxis = d3.axisBottom().scale(xScale);
-
-		// setup y
-		var yValue = function(d) { return d["seq"];}, 
-		    yScale = d3.scaleLinear().range([height, 0]), 
-		    yMap = function(d) { return yScale(yValue(d));}, 
-		    yAxis = d3.axisLeft().scale(yScale);
-
-		xScale.domain([d3.min(sepActions_data, xValue), d3.max(sepActions_data, xValue)+1]);
- 		//yScale.domain([d3.min(sepActions_data, yValue), d3.max(sepActions_data, yValue)+1]);
- 		yScale.domain([d3.min(sepActions_data, yValue), 200]);
-
- 		var xAxis = d3.axisBottom(xScale);
- 		var yAxis = d3.axisLeft(yScale);
-
-	 		// draw legend
-	  var legend = svg5.selectAll(".legend")
-	      .data(color.domain())
-	    .enter().append("g")
-	      .attr("class", "legend")
-	      .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
-
-	  // draw legend colored rectangles
-	  legend.append("rect")
-	      .attr("x", width - 18)
-	      .attr("width", 18)
-	      .attr("height", 18)
-	      .style("fill", actionColor);
-
-	  // // draw legend text
-	  // legend.append("text")
-	  //     .attr("x", width - 24)
-	  //     .attr("y", 9)
-	  //     .attr("dy", ".35em")
-	  //     .style("text-anchor", "end")
-	  //     .text(function(d) { return "Cluser " + d;})
-
-	 // add the tooltip area to the webpage
-	var tooltip = d3.select("body").append("div")
-    .attr("class", "tooltip")
-    .style("opacity", 0);
-
-    var g = svg5.append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-     g.append("g")
-         .call(xAxis)
-     g.append("g")
-         .call(yAxis)
-     
-
-	 g.selectAll(".dot")
-      .data(sepActions_data)
-    .enter().append("circle")
-      .attr("class", "dot")
-      .attr("r", 3.5)
-      .attr("cx", xMap)
-      .attr("cy", yMap)
-      .style("fill", function(d) { return actionColor(d["color"]);})
+	
       
       // .on("mouseover", function(d) {
       //     tooltip.transition()
@@ -334,6 +269,74 @@ function plot_it()  {
          .attr("fill", function(d){return color(element["cluster"]);})
          .attr("width", xScale.bandwidth())
          .attr("height", function(d) { return height - yScale(d[id]); });
+
+
+         var actionColor = d3.scaleOrdinal()
+      .domain(["MODEL", "CREATE", "PLAY", "STOP", "STEP", "CHANGE", "None"])
+      .range(["#6600CC","#FF0000","#009933","#FF0000", "#0099FF", "#FF9900", "#FFFFFF"]);
+
+      var xValue = function(d) { return d['x'];}, 
+		    xScale = d3.scaleLinear().range([0, width]), 
+		    xMap = function(d) { return xScale(xValue(d));},
+		    xAxis = d3.axisBottom().scale(xScale);
+
+		// setup y
+		var yValue = function(d) { return d["seq"];}, 
+		    yScale = d3.scaleLinear().range([height, 0]), 
+		    yMap = function(d) { return yScale(yValue(d));}, 
+		    yAxis = d3.axisLeft().scale(yScale);
+
+			xScale.domain([d3.min(sepActions_data, xValue), d3.max(sepActions_data, xValue)+1]);
+	 		yScale.domain([d3.min(sepActions_data, yValue), d3.max(sepActions_data, yValue)+1]);
+	 		//yScale.domain([d3.min(sepActions_data, yValue), 200]);
+
+	 		var xAxis = d3.axisBottom(xScale);
+	 		var yAxis = d3.axisLeft(yScale);
+
+		 		// draw legend
+		  var legend = svg5.selectAll(".legend")
+		      .data(actionColor.domain())
+		    .enter().append("g")
+		      .attr("class", "legend")
+		      .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+
+		  // draw legend colored rectangles
+		  legend.append("rect")
+		      .attr("x", width - 18)
+		      .attr("width", 18)
+		      .attr("height", 18)
+		      .style("fill", actionColor);
+
+		  // draw legend text
+		  legend.append("text")
+		      .attr("x", width - 24)
+		      .attr("y", 9)
+		      .attr("dy", ".35em")
+		      .style("text-anchor", "end")
+		      .text(function(d) { if(d!= "None"){return d;}})
+
+		 // add the tooltip area to the webpage
+		var tooltip = d3.select("body").append("div")
+	    .attr("class", "tooltip")
+	    .style("opacity", 0);
+
+	    var g = svg5.append("g")
+	    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+	     // g.append("g")
+	     //     .call(xAxis)
+	     g.append("g")
+	         .call(yAxis)
+	     
+
+		 g.selectAll(".dot")
+	      .data(sepActions_data)
+	    .enter().append("circle")
+	      .attr("class", "dot")
+	      .attr("r", 3.5)
+	      .attr("cx", xMap)
+	      .attr("cy", yMap)
+	      .style("fill", function(d) { return actionColor(d[id]);})
     	
   	}
 
