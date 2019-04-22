@@ -66,8 +66,10 @@ corpus_tfidf = tfidf[bow_corpus]
 #     break
 
 #lda_model = gensim.models.LdaSinglecore(bow_corpus, num_topics=3, id2word=dictionary, passes=2, workers=2)
-lda_model = gensim.models.ldamodel.LdaModel(bow_corpus, num_topics=2, id2word = dictionary, passes=20)
-print(lda_model.print_topics(num_topics=2, num_words=5))
+perplexity_logger = gensim.models.callbacks.PerplexityMetric(corpus=bow_corpus, logger='shell')
+lda_model = gensim.models.ldamodel.LdaModel(bow_corpus, num_topics=4, id2word = dictionary, passes=20, callbacks=[perplexity_logger])
+print(lda_model.print_topics(num_topics=3, num_words=2))
+print(lda_model.log_perplexity(bow_corpus))
 
 # for idx, topic in lda_model.print_topics(-1):
 #     print('Topic: {} \nWords: {}'.format(idx, topic))
