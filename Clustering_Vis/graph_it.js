@@ -5,77 +5,20 @@
 * 
 * Adopting code from Jason Davies's and Michele Weigle's Block
 */
+
+
 function plot_it()  {
 	
 	//var margin = {top: 50, right: 50, bottom: 100, left: 50},
     var margin = {top: 50, right: 50, bottom: 100, left: 50},
-    width = 960 - margin.left - margin.right,
+    width = 700 - margin.left - margin.right,
     height = 415 - margin.top - margin.bottom;
  // 	var	margin = {top: 30, right: 20, bottom: 30, left: 50},
 	// width = 800 - margin.left - margin.right,
 	// height = 415 - margin.top - margin.bottom;
  
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
-	var x = d3.scalePoint().range([0, width], 1),
-	y = {},
-    dragging = {};
-
-	var line = d3.line(),
-    	axis = d3.axisLeft,
-    	background,
-    	foreground;
-   	var cValue = function(d) { return d["cluster"];},
-   	color = d3.scaleOrdinal(d3.schemeCategory10);
-
-	var svg1 = d3.select("body").append("svg")
-    	.attr("width", width + margin.left + margin.right)
-    	.attr("height", height + margin.top + margin.bottom)
-  		.append("g")
-    	.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-    // Extract the list of dimensions and create a scale for each.
-	  x.domain(dimensions = d3.keys(features_data[0]).filter(function(d) {
-	    return d != "student" && d != "cluster" && (y[d] = d3.scaleLinear()
-	        .domain(d3.extent(features_data, function(p) { return +p[d]; }))
-	        .range([height, 0]));
-	  }));
-
-	// Add grey background lines for context.
-	  background = svg1.append("g")
-	      .attr("class", "background")
-	    .selectAll("path")
-	      .data(features_data)
-	    .enter().append("path")
-	      .attr("d", path);
-
-	  // Add blue foreground lines for focus.
-	  foreground = svg1.append("g")
-	      .attr("class", "foreground")
-	    .selectAll("path")
-	      .data(features_data)
-	    .enter().append("path")
-	    .style("stroke", function(d){return color(cValue(d));})
-	      .attr("d", path);
-
-	     
-	  
-	  // Add a group element for each dimension.
-	  var g = svg1.selectAll(".dimension")
-	      .data(dimensions)
-	    .enter().append("g")
-	      .attr("class", "dimension")
-	      .attr("transform", function(d) { return "translate(" + x(d) + ")"; });
-
-	   // Add an axis and title.
-
-		  g.append("g")
-		      .attr("class", "axis")
-		      .each(function(d) { d3.select(this).call(d3.axisLeft(y[d])); })
-		    .append("text")
-		    .attr("fill", "black")
-		      .style("text-anchor", "middle")
-		      .attr("y", -9)
-		      .text(function(d) { return d });
+	
 
 				    
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -195,7 +138,7 @@ function plot_it()  {
 	        svg3.selectAll("*").remove();
 	        var studentIds = mapStudents(d_brushed);
 	        populateBar(studentIds);
-	        populateParallel(d_brushed);
+	        //populateParallel(d_brushed);
 	        svg5.selectAll("*").remove();
 	       	studentIds.forEach(student => populateActionView(student, studentIds.indexOf(student), studentIds));
 
@@ -275,7 +218,7 @@ function plot_it()  {
         .attr("font-weight", "bold")
         .text(scores_data.y))
 
- 	svg3.append("g")
+ 	var selection = svg3.append("g")
     .selectAll("g")
     .data(scores_data)
     .join("g")
@@ -287,7 +230,17 @@ function plot_it()  {
       .attr("y", d => y(d.value))
       .attr("width", x1.bandwidth())
       .attr("height", d => y(0) - y(d.value))
-      .attr("fill", d3.hcl(-97, 32, 52));
+      .attr("fill", d3.hcl(-97, 32, 52))
+     
+     selection.selectAll("text")
+       .data(scores_data)
+        .enter().append("text")
+        .attr("x", d => x1(d.key) )
+        .attr("y", d => y(d.value))
+        .style('fill',"pink")
+        .style('font-size', '1.25em')
+        .text(d => d.key);
+
 
 
   	svg3.append("g")
@@ -295,6 +248,8 @@ function plot_it()  {
 
  	 svg3.append("g")
       .call(yAxis);
+
+     
  	
  }
 
@@ -358,8 +313,8 @@ function populateActionView(student,xVal, studentIds){
 
       var xValue = function(d) { return xVal;}, 
 		    xScale = d3.scaleLinear().range([1, widthActions]), 
-		    xMap = function(d) { return xScale(xVal);},
-		    xAxis = d3.axisTop().scale(xScale).ticks(studentIds.length);
+		    xMap = function(d) { return xScale(xVal +0.5);},
+		    xAxis = d3.axisBottom().scale(xScale).ticks(studentIds.length);
 
 	console.log("len",studentIds.length)
 		// setup y
@@ -385,14 +340,14 @@ function populateActionView(student,xVal, studentIds){
 
 		  // draw legend colored rectangles
 		  legend.append("rect")
-		      .attr("x", widthActions - 18)
+		      .attr("x", widthActions + 70)
 		      .attr("width", 18)
 		      .attr("height", 18)
 		      .style("fill", actionColor);
 
 		  // draw legend text
 		  legend.append("text")
-		      .attr("x", widthActions - 24)
+		      .attr("x", widthActions + 65)
 		      .attr("y", 9)
 		      .attr("dy", ".35em")
 		      .style("text-anchor", "end")
@@ -406,13 +361,20 @@ function populateActionView(student,xVal, studentIds){
 	    var g = svg5.append("g")
 	    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-	     g.append("g")
-	         .call(xAxis
-	         .tickFormat(function(d){
-             return studentIds[xValue(d)];
-         })).attr("transform", "translate(0," + height*3.15 + ")");
-	     g.append("g")
-	         .call(yAxis)
+	    if(xVal == studentIds.length-1){
+	    	var x = d3.scaleBand()
+		    .domain(studentIds)
+		    .range([1, widthActions]);
+
+		    var xAxis = d3.axisBottom()
+		    .scale(x).ticks(studentIds.length+1);
+			g.append("g")
+			         .call(xAxis)
+			         .attr("transform", "translate(0," + heightActions + ")");
+			     g.append("g")
+			         .call(yAxis)
+	     
+	    }
 	     
 
 		 g.selectAll(".dot")
@@ -432,6 +394,13 @@ function populateActionView(student,xVal, studentIds){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+  var margin = {top: 50, right: 50, bottom: 100, left: 50},
+    widthActions = 600 - margin.left - margin.right,
+    heightActions = 900 - margin.top - margin.bottom;
+
+    var svg5 = d3.select("body").append("svg")
+    	.attr("width", widthActions + margin.left + margin.right)
+    	.attr("height", heightActions + margin.top + margin.bottom)
 
   	var svg3 = d3.select("body").append("svg")
     	.attr("width", width + margin.left + margin.right)
@@ -439,19 +408,75 @@ function populateActionView(student,xVal, studentIds){
 
   		
 
-    var margin = {top: 50, right: 50, bottom: 100, left: 50},
-    widthActions = 600 - margin.left - margin.right,
-    heightActions = 960 - margin.top - margin.bottom;
-
+  
    // var svg4 = d3.select("body").append("svg")
    //  	.attr("width", width + margin.left + margin.right)
    //  	.attr("height", height + margin.top + margin.bottom)
   		// .append("g")
     // 	.attr("transform", "translate(" + margin.left + "," + margin.top + ")")
 
-    var svg5 = d3.select("body").append("svg")
-    	.attr("width", widthActions + margin.left + margin.right)
-    	.attr("height", heightActions + margin.top + margin.bottom)
+
+ //    	var x = d3.scalePoint().range([0, width], 1),
+	// y = {},
+ //    dragging = {};
+
+	// var line = d3.line(),
+ //    	axis = d3.axisLeft,
+ //    	background,
+ //    	foreground;
+ //   	var cValue = function(d) { return d["cluster"];},
+ //   	color = d3.scaleOrdinal(d3.schemeCategory10);
+
+
+	// var svg1 = d3.select("body").append("svg")
+ //    	.attr("width", width + margin.left + margin.right)
+ //    	.attr("height", height + margin.top + margin.bottom)
+ //  		.append("g")
+ //    	.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+ //    // Extract the list of dimensions and create a scale for each.
+	//   x.domain(dimensions = d3.keys(features_data[0]).filter(function(d) {
+	//     return d != "student" && d != "cluster" && (y[d] = d3.scaleLinear()
+	//         .domain(d3.extent(features_data, function(p) { return +p[d]; }))
+	//         .range([height, 0]));
+	//   }));
+
+	// // Add grey background lines for context.
+	//   background = svg1.append("g")
+	//       .attr("class", "background")
+	//     .selectAll("path")
+	//       .data(features_data)
+	//     .enter().append("path")
+	//       .attr("d", path);
+
+	//   // Add blue foreground lines for focus.
+	//   foreground = svg1.append("g")
+	//       .attr("class", "foreground")
+	//     .selectAll("path")
+	//       .data(features_data)
+	//     .enter().append("path")
+	//     .style("stroke", function(d){return color(cValue(d));})
+	//       .attr("d", path);
+
+	     
+	  
+	//   // Add a group element for each dimension.
+	//   var g = svg1.selectAll(".dimension")
+	//       .data(dimensions)
+	//     .enter().append("g")
+	//       .attr("class", "dimension")
+	//       .attr("transform", function(d) { return "translate(" + x(d) + ")"; });
+
+	//    // Add an axis and title.
+
+	// 	  g.append("g")
+	// 	      .attr("class", "axis")
+	// 	      .each(function(d) { d3.select(this).call(d3.axisLeft(y[d])); })
+	// 	    .append("text")
+	// 	    .attr("fill", "black")
+	// 	      .style("text-anchor", "middle")
+	// 	      .attr("y", -9)
+	// 	      .text(function(d) { return d });
 	
       
       // .on("mouseover", function(d) {
