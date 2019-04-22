@@ -45,3 +45,12 @@ for(i in 1:36){
 }
 
 
+data <- read.csv(file="chicago_actions.csv", header=TRUE, sep=",")
+data <- data[1:36,1:2]
+actions <- data[,2]
+actions <- as.character(actions)
+
+for(i in 1:36){
+  a <- strsplit(actions[i],";")
+  
+}

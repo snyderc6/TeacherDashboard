@@ -15,6 +15,7 @@ function plot_it()  {
 	// width = 800 - margin.left - margin.right,
 	// height = 415 - margin.top - margin.bottom;
  
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
 	var x = d3.scalePoint().range([0, width], 1),
 	y = {},
     dragging = {};
@@ -77,7 +78,7 @@ function plot_it()  {
 		      .text(function(d) { return d });
 
 				    
-
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		var svg2 = d3.select("body").append("svg")
     	.attr("width", width + margin.left + margin.right)
@@ -131,7 +132,7 @@ function plot_it()  {
     .attr("class", "tooltip")
     .style("opacity", 0);
 
-	   svg2.selectAll(".dot")
+	 var circles = svg2.append("g").selectAll(".dot")
       .data(pca_data)
     .enter().append("circle")
       .attr("class", "dot")
@@ -139,6 +140,7 @@ function plot_it()  {
       .attr("cx", xMap)
       .attr("cy", yMap)
       .style("fill", function(d) { return color(cValue(d));})
+      .attr("class", "non_brushed")
       .on("mouseover", function(d) {
           tooltip.transition()
                .duration(200)
@@ -152,24 +154,154 @@ function plot_it()  {
                .duration(500)
                .style("opacity", 0);
       })
-      .on("click", clicked);
+      // .on("click", clicked);
 
-        
+    svg2.append("g")
+      .call(d3.brush()
+          .extent([[margin.left, margin.top], [width - margin.right, height - margin.bottom]])
+          .on("brush end", brushed));
+  
 
-      function brushed() {
-	    let value = [];
-	    if (d3.event.selection) {
-	      const [[x0, y0], [x1, y1]] = d3.event.selection;
-	      value = pca_data.filter(d => x0 <= x(d.x) && x(d.x) < x1 && y0 <= y(d.y) && y(d.y) < y1);
+  function brushed() {
+    var selection = d3.event.selection;
+    if (selection) {
+    	circles.attr("class", "non_brushed");
+        var brush_coords = d3.brushSelection(this);
+
+        circles.filter(function (){
+
+            var cx = d3.select(this).attr("cx"),
+                cy = d3.select(this).attr("cy");
+                return isBrushed(brush_coords, cx, cy);
+            })
+            .attr("class", "brushed");
+        console.log("circles",circles);
+	    var d_brushed =  svg2.selectAll(".brushed").data();
+		//console.log("length", d_brushed)
+	                // populate table if one or more elements is brushed
+	    if (d_brushed.length > 0) {
+	        svg3.selectAll("*").remove();
+	        var students = mapStudents(d_brushed);
+	        console.log(students);
+	        populateBar(students);
+	        //d_brushed.forEach(student => populateBar(student));
+
+
+	    } else {
+	         svg3.selectAll("*").remove();
 	    }
-	    svg2.property("value", value).dispatch("input");
-  	}
+    }
 
+  }
+
+  function isBrushed(brush_coords, cx, cy) {
+       var x0 = brush_coords[0][0],
+           x1 = brush_coords[1][0],
+           y0 = brush_coords[0][1],
+           y1 = brush_coords[1][1];
+      return x0 <= cx && cx <= x1 && y0 <= cy && cy <= y1;    // This return TRUE or FALSE depending on if the points is in the selected area
+  }
+
+  function mapStudents(students){
+  	var studentIds = [];
+  	for (var i = students.length - 1; i >= 0; i--) {
+  		stud = students[i];
+  		console.log("stud", stud)
+  		var id = stud["student"];
+  		console.log("id", id)
+  		studentIds.push(id);
+  	}
+  	// for stud in studentIds:
+  	// 	var id = stud.student;
+  	// 	students.append(scores_data[id]);
+  	// }
+  	return(studentIds);
+  }
+ function populateBar(studentIds) {
+
+ 	var groupKey = "student";
+ 	var keys = studentIds;
+
+	
+    
+    x0 = function(i){}
+
+	x1 = function(i){}
+
+	x0 = d3.scaleBand()
+    .domain(scores_data.map(d => d[groupKey]))
+    .rangeRound([margin.left, width - margin.right])
+    .paddingInner(0.1)
+
+    x1 = d3.scaleBand()
+    .domain(keys)
+    .rangeRound([0, x0.bandwidth()])
+    .padding(0.05)
+
+    y = function(n){}
+    y = d3.scaleLinear()
+    .domain([0, d3.max(scores_data, d => d3.max(keys, key => d[key]))]).nice()
+    .rangeRound([height - margin.bottom, margin.top])
+
+    xAxis = function(g){}
+
+	yAxis = function(g){}
+
+	xAxis = g => g
+    .attr("transform", `translate(0,${height - margin.bottom})`)
+    .call(d3.axisBottom(x0).tickSizeOuter(0))
+    .call(g => g.select(".domain").remove())
+
+    yAxis = g => g
+    .attr("transform", `translate(${margin.left},0)`)
+    .call(d3.axisLeft(y).ticks(null, "s"))
+    .call(g => g.select(".domain").remove())
+    .call(g => g.select(".tick:last-of-type text").clone()
+        .attr("x", 3)
+        .attr("text-anchor", "start")
+        .attr("font-weight", "bold")
+        .text(scores_data.y))
+
+ 	svg3.append("g")
+    .selectAll("g")
+    .data(scores_data)
+    .join("g")
+      .attr("transform", d => `translate(${x0(d[groupKey])},0)`)
+    .selectAll("rect")
+    .data(d => keys.map(key => ({key, value: d[key]})))
+    .join("rect")
+      .attr("x", d => x1(d.key))
+      .attr("y", d => y(d.value))
+      .attr("width", x1.bandwidth())
+      .attr("height", d => y(0) - y(d.value))
+      .attr("fill", d3.hcl(-97, 32, 52));
+
+  	svg3.append("g")
+      .call(xAxis);
+
+ 	 svg3.append("g")
+      .call(yAxis);
+
+  
+
+  	
+ }
+
+    
+  
+      
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
   	var svg3 = d3.select("body").append("svg")
     	.attr("width", width + margin.left + margin.right)
     	.attr("height", height + margin.top + margin.bottom)
+
+  		
+
+
 
    var svg4 = d3.select("body").append("svg")
     	.attr("width", width + margin.left + margin.right)
@@ -368,34 +500,6 @@ function plot_it()  {
 	  return line(dimensions.map(function(p) { return [position(p), y[p](d[p])]; }));
 	}
 
-	function brushstart() {
-    d3.event.sourceEvent.stopPropagation();
-  }
-	 function brush() {
-	    render.invalidate();
-
-	    var actives = [];
-	    svg1.selectAll(".axis .brush")
-	      .filter(function(d) {
-	        return d3.brushSelection(this);
-	      })
-	      .each(function(d) {
-	        actives.push({
-	          dimension: d,
-	          extent: d3.brushSelection(this)
-	        });
-	      });
-
-	    var selected = features_data.filter(function(d) {
-	      if (actives.every(function(active) {
-	          var dim = active.dimension;
-	          // test if point is within extents for each active brush
-	          return dim.type.within(d[dim.key], active.extent, dim);
-	        })) {
-	        return true;
-	      }
-	    });
-	}
 
 
 

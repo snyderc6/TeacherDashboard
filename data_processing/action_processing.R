@@ -39,4 +39,4 @@ for(i in 1:36){
   
 }
 
-write.csv(allActions, file = "Chicago_MB1_Actions_Sep.csv" ,row.names=FALSE)
+write.csv(t(allActions), file = "Chicago_MB1_Actions_Sep.csv" ,row.names=FALSE)
