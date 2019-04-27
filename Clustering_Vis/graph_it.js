@@ -283,30 +283,6 @@ var margin = {top: 30, right: 30, bottom: 30, left: 30},
 		     .range(["#6600CC","#FF00FF","#009933","#FF0000", "#0099FF", "#FF9900", "#FFFFFF"]);
 
 
-       		// draw legend
-		  var legend = svg5.selectAll(".legend")
-		      .data(actionColor.domain())
-		    .enter().append("g")
-		      .attr("class", "legend")
-		      .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
-
-		  // draw legend colored rectangles
-		  legend.append("rect")
-		      .attr("x", width + 10)
-		      .attr("width", 18)
-		      .attr("height", 18)
-		      .style("fill", actionColor)
-		       .on("click", function(d){
-		       	clickedAction(this, studentIds, d)});
-
-		  // draw legend text
-		  legend.append("text")
-		      .attr("x", width)
-		      .attr("y", 9)
-		      .attr("dy", ".35em")
-		      .style("text-anchor", "end")
-		      .text(function(d) { if(d!= "None"){return d;}})
-
 
 		var x = d3.scaleBand()
 		  .range([ 0, width ])
@@ -341,6 +317,32 @@ var margin = {top: 30, right: 30, bottom: 30, left: 30},
       	}
       	
       } );
+
+      
+       		// draw legend
+		  var legend = svg5.selectAll(".legend")
+		      .data(actionColor.domain())
+		    .enter().append("g")
+		      .attr("class", "legend")
+		      .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+
+		  // draw legend colored rectangles
+		  legend.append("rect")
+		      .attr("x", width + 10)
+		      .attr("width", 18)
+		      .attr("height", 18)
+		      .style("fill", actionColor)
+		       .on("click", function(d){
+		       	clickedAction(this, studentIds, d)});
+
+		  // draw legend text
+		  legend.append("text")
+		      .attr("x", width)
+		      .attr("y", 9)
+		      .attr("dy", ".35em")
+		      .style("text-anchor", "end")
+		      .text(function(d) { if(d!= "None"){return d;}})
+
 
 	        
   }
