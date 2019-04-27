@@ -3,6 +3,7 @@
 Data Visualization Tool for C2STEM
 
 Instructions to run: 
+Navigate to the Clustering_Vis folder.
 ```
 python -m http.server
 ```
@@ -14,4 +15,4 @@ Documentation information:
 The final report is located in the documentation folder.
 
 Data information:
-The data sources are located in the box folder.
+The data sources are located in the box folder (make sure to put them in file called data in the Clustering_Vis folder).
