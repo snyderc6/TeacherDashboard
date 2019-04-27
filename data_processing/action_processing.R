@@ -40,3 +40,21 @@ for(i in 1:36){
 }
 
 write.csv(t(allActions), file = "Chicago_MB1_Actions_Sep.csv" ,row.names=FALSE)
+
+
+
+
+data <- read.csv(file="Chicago_MB1_Actions_Sep.csv", header=FALSE, sep=",")
+actions = c("student", "actionNum", "actionType")
+for(i in 2:ncol(data)){
+  for(j in 2:nrow(data)){
+    actionType = levels(droplevels(data[j,i]))
+    if(actionType != "None"){
+      newRow = c(levels(droplevels(data[1,i])), j-1, actionType)
+      actions = rbind(actions, newRow)
+    }
+  }
+}
+
+
+write.csv(actions, file = "Chicago_MB1_Actions_Format1.csv" ,row.names=FALSE)

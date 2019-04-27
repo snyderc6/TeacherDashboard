@@ -8,11 +8,37 @@
 
 
 function plot_it()  {
+	 var margin = {top: 50, right: 90, bottom: 100, left: 90},
+     width = 600 - margin.left - margin.right,
+     // gridSize = Math.floor(widthActions/861),
+    // heightActions = gridSize * (studentIds.length+2);
+    height = 400 - margin.bottom - margin.top;
+
+
+  	var svg3 = d3.select("body").append("svg")
+    	.attr("width", width + margin.left + margin.right)
+    	.attr("height", height + margin.top + margin.bottom)
+
+var spacer = d3.select("body").append("svg")
+    	.attr("width", 100)
+    	.attr("height", 400)
+     
+
+  	 // svg5.selectAll("*").remove();
+  	 var svg5 = d3.select("body")
+.append("svg")
+  .attr("width", width + 200 + margin.left + margin.right)
+  .attr("height", height + margin.top + margin.bottom)
+.append("g")
+  .attr("transform",
+        "translate(" + margin.left + "," + margin.top + ")");
+
+
 	
 	//var margin = {top: 50, right: 50, bottom: 100, left: 50},
-    var margin = {top: 50, right: 50, bottom: 100, left: 50},
-    width = 700 - margin.left - margin.right,
-    height = 415 - margin.top - margin.bottom;
+    var margin = {top: 50, right: 50, bottom: 50, left: 50},
+    width = 900 - margin.left - margin.right,
+    height = 400 - margin.top - margin.bottom;
  // 	var	margin = {top: 30, right: 20, bottom: 30, left: 50},
 	// width = 800 - margin.left - margin.right,
 	// height = 415 - margin.top - margin.bottom;
@@ -22,12 +48,22 @@ function plot_it()  {
 
 				    
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
+		var spacer2 = d3.select("body").append("svg")
+    	.attr("width", 250)
+    	.attr("height", 400)
 
 		var svg2 = d3.select("body").append("svg")
     	.attr("width", width + margin.left + margin.right)
     	.attr("height", height + margin.top + margin.bottom)
+    	.attr("style", "outline: thin solid black;") 
   		.append("g")
-    	.attr("transform", "translate(" + margin.left + "," + margin.top + ")");  
+    	.attr("transform", "translate(" + margin.left + "," + margin.top + ")") 
+    	// .append("svg")
+     //         .attr("style", "outline: thin solid black;")   //This will do the job
+     //         .attr("width", width+ margin.left + margin.right+100)
+     //         .attr("height", height + margin.top + margin.bottom+3000);
+  		 
 
     	// setup x 
 		var xValue = function(d) { return d['x'];}, 
@@ -53,6 +89,7 @@ function plot_it()  {
 	      .data(color.domain())
 	    .enter().append("g")
 	      .attr("class", "legend")
+	      // .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
 	      .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
 
 	  // draw legend colored rectangles
@@ -68,7 +105,7 @@ function plot_it()  {
 	      .attr("y", 9)
 	      .attr("dy", ".35em")
 	      .style("text-anchor", "end")
-	      .text(function(d) { return "Cluser " + d;})
+	      .text(function(d) { return "Cluster " + d;})
 
 	 // add the tooltip area to the webpage
 	var tooltip = d3.select("body").append("div")
@@ -140,7 +177,8 @@ function plot_it()  {
 	        populateBar(studentIds);
 	        //populateParallel(d_brushed);
 	        svg5.selectAll("*").remove();
-	       	studentIds.forEach(student => populateActionView(student, studentIds.indexOf(student), studentIds));
+	        setUpActions(studentIds);
+	       	// studentIds.forEach(student => populateActionView(student, studentIds.indexOf(student), studentIds));
 
 
 	    } else {
@@ -148,6 +186,163 @@ function plot_it()  {
 	    }
     }
 
+  }
+
+  function setUpActions(studentIds){
+  	var margin = {top: 30, right: 30, bottom: 30, left: 30},
+     width = 600 - margin.left - margin.right,
+     // gridSize = Math.floor(widthActions/861),
+    // heightActions = gridSize * (studentIds.length+2);
+    height = 400 - margin.bottom - margin.top;
+  	console.log("calling set up Actions")
+  	console.log("dat1", studentIds)
+  	
+    var actions = d3.range(200);
+    // var studentIds = ["bzs01", "bzs02", "bzs03", "bzs04", "bzs05", "bzs06", "bzs07", "bzs08", "bzs09", "bzs10", "bzs11", "bzs12", "bzs13", "bzs14", "bzs15", "bzs16", "bzs17", "bzs18", "bzs19", "bzs20", "bzs21", "bzs23", "bzs24", "bzs25", "bzs28", "bzs29", "bzs30", "bzs32","bzs34", "bzs35", "bzs36", "bzs38", "bzs40", "bzs41", "bzs42", "bzs43"]
+
+     svg5.attr("width", width + margin.left + margin.right)
+    	.attr("height", height + margin.top + margin.bottom)
+    	.append("g")
+    	.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+	 var actionColor = d3.scaleOrdinal()
+		    .domain(["MODEL", "CREATE", "PLAY", "STOP", "STEP", "CHANGE", "None"])
+		     .range(["#6600CC","#FF00FF","#009933","#FF0000", "#0099FF", "#FF9900", "#FFFFFF"]);
+
+		var x = d3.scaleBand()
+		  .range([ 0, width ])
+		  .domain(actions)
+		  .padding(0.9);
+
+	svg5.append("g")
+	  .attr("transform", "translate(0," + height + ")")
+	  // .call(d3.axisBottom(x))
+
+	 var y = d3.scaleBand()
+		  .range([ height, 0 ])
+		  .domain(studentIds)
+		  .padding(0.9);
+	svg5.append("g")
+		  .call(d3.axisLeft(y));
+
+	svg5.selectAll()
+      .data(sepActions_data, function(d) {return d.student+':'+d.actionNum;})
+      .enter()
+      .append("rect")
+      .filter(function(d){return studentIds.includes(d.student)})
+      .attr("x", function(d) { return x(d.actionNum) })
+      .attr("y", function(d) { return y(d.student) })
+      .attr("width", x.bandwidth()*11 )
+      .attr("height", y.bandwidth()*4)
+      .style("fill", function(d) {return actionColor(d.actionType)} );
+
+       		// draw legend
+		  var legend = svg5.selectAll(".legend")
+		      .data(actionColor.domain())
+		    .enter().append("g")
+		      .attr("class", "legend")
+		      .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+
+		  // draw legend colored rectangles
+		  legend.append("rect")
+		      .attr("x", width + 10)
+		      .attr("width", 18)
+		      .attr("height", 18)
+		      .style("fill", actionColor)
+		       .on("click", function(d){
+		       	clickedAction(this, studentIds,d)});
+
+		  // draw legend text
+		  legend.append("text")
+		      .attr("x", width )
+		      .attr("y", 9)
+		      .attr("dy", ".35em")
+		      .style("text-anchor", "end")
+		      .text(function(d) { if(d!= "None"){return d;}})
+	
+  }
+
+  function clickedAction(element, studentIds,elemColor){
+  	 svg5.selectAll("*").remove();
+
+var margin = {top: 30, right: 30, bottom: 30, left: 30},
+     width = 600 - margin.left - margin.right,
+     // gridSize = Math.floor(widthActions/861),
+    // heightActions = gridSize * (studentIds.length+2);
+    height = 400 - margin.bottom - margin.top;
+    var actions = d3.range(200);
+    // var studentIds = ["bzs01", "bzs02", "bzs03", "bzs04", "bzs05", "bzs06", "bzs07", "bzs08", "bzs09", "bzs10", "bzs11", "bzs12", "bzs13", "bzs14", "bzs15", "bzs16", "bzs17", "bzs18", "bzs19", "bzs20", "bzs21", "bzs23", "bzs24", "bzs25", "bzs28", "bzs29", "bzs30", "bzs32","bzs34", "bzs35", "bzs36", "bzs38", "bzs40", "bzs41", "bzs42", "bzs43"]
+
+     svg5.attr("width", width + margin.left + margin.right)
+    	.attr("height", height + margin.top + margin.bottom)
+    	.append("g")
+    	.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+	 var actionColor = d3.scaleOrdinal()
+		    .domain(["MODEL", "CREATE", "PLAY", "STOP", "STEP", "CHANGE", "None"])
+		     .range(["#6600CC","#FF00FF","#009933","#FF0000", "#0099FF", "#FF9900", "#FFFFFF"]);
+
+
+       		// draw legend
+		  var legend = svg5.selectAll(".legend")
+		      .data(actionColor.domain())
+		    .enter().append("g")
+		      .attr("class", "legend")
+		      .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+
+		  // draw legend colored rectangles
+		  legend.append("rect")
+		      .attr("x", width + 10)
+		      .attr("width", 18)
+		      .attr("height", 18)
+		      .style("fill", actionColor)
+		       .on("click", function(d){
+		       	clickedAction(this, studentIds, d)});
+
+		  // draw legend text
+		  legend.append("text")
+		      .attr("x", width)
+		      .attr("y", 9)
+		      .attr("dy", ".35em")
+		      .style("text-anchor", "end")
+		      .text(function(d) { if(d!= "None"){return d;}})
+
+
+		var x = d3.scaleBand()
+		  .range([ 0, width ])
+		  .domain(actions)
+		  .padding(0.9);
+
+	svg5.append("g")
+	  .attr("transform", "translate(0," + height + ")")
+	  // .call(d3.axisBottom(x))
+
+	 var y = d3.scaleBand()
+		  .range([ height, 0 ])
+		  .domain(studentIds)
+		  .padding(0.9);
+	svg5.append("g")
+		  .call(d3.axisLeft(y));
+
+	svg5.selectAll()
+      .data(sepActions_data, function(d) {return d.student+':'+d.actionNum;})
+      .enter()
+      .append("rect")
+      .filter(function(d){return studentIds.includes(d.student)})
+      .attr("x", function(d) { return x(d.actionNum) })
+      .attr("y", function(d) { return y(d.student) })
+      .attr("width", x.bandwidth()*11 )
+      .attr("height", y.bandwidth()*4)
+      .style("fill", function(d) {
+      	if(d.actionType == elemColor){
+			return actionColor(d.actionType)
+      	}else{
+      		return "#FFFFFF" ;
+      	}
+      	
+      } );
+
+	        
   }
 
   function isBrushed(brush_coords, cx, cy) {
@@ -173,7 +368,14 @@ function plot_it()  {
   	// }
   	return(studentIds);
   }
+
  function populateBar(studentIds) {
+
+ 	 var margin = {top: 30, right: 30, bottom: 30, left: 30},
+     width = 700 - margin.left - margin.right,
+     // gridSize = Math.floor(widthActions/861),
+    // heightActions = gridSize * (studentIds.length+2);
+    height = 400 - margin.bottom - margin.top;
 
  	var groupKey = "student";
  	var keys = studentIds;
@@ -230,16 +432,21 @@ function plot_it()  {
       .attr("y", d => y(d.value))
       .attr("width", x1.bandwidth())
       .attr("height", d => y(0) - y(d.value))
-      .attr("fill", d3.hcl(-97, 32, 52))
+      .attr("fill", d => color(getCluster(d.key)))
      
-     selection.selectAll("text")
+
+    
+     
+     // selection.selectAll("text")
        .data(scores_data)
         .enter().append("text")
         .attr("x", d => x1(d.key) )
         .attr("y", d => y(d.value))
-        .style('fill',"pink")
-        .style('font-size', '1.25em')
-        .text(d => d.key);
+         .text(function(d){ return d.key;})
+        .attr("transform", "rotate(90)")
+        .style('fill',"white")
+        .style('font-size', '1.25em');
+
 
 
 
@@ -251,6 +458,16 @@ function plot_it()  {
 
      
  	
+ }
+
+ function getCluster(studentId){
+ 	if((studentId == "bzs02") || (studentId == "bzs07")){
+ 		return 1;
+ 	}else if((studentId == "bzs03") || (studentId == "bzs13")|| (studentId == "bzs14")){
+ 		return 2;
+ 	}else{
+ 		return 0;
+ 	}
  }
 
  function populateParallel(student){
@@ -305,108 +522,107 @@ function plot_it()  {
 
  }
 
-function populateActionView(student,xVal, studentIds){
-		console.log("x",xVal)
-        var actionColor = d3.scaleOrdinal()
-      .domain(["MODEL", "CREATE", "PLAY", "STOP", "STEP", "CHANGE", "None"])
-      .range(["#6600CC","#FF00FF","#009933","#FF0000", "#0099FF", "#FF9900", "#FFFFFF"]);
+// function populateActionView(student,xVal, studentIds){
+// 		console.log("x",xVal)
+//         var actionColor = d3.scaleOrdinal()
+//       .domain(["MODEL", "CREATE", "PLAY", "STOP", "STEP", "CHANGE", "None"])
+//       .range(["#6600CC","#FF00FF","#009933","#FF0000", "#0099FF", "#FF9900", "#FFFFFF"]);
 
-      var xValue = function(d) { return xVal;}, 
-		    xScale = d3.scaleLinear().range([1, widthActions]), 
-		    xMap = function(d) { return xScale(xVal +0.5);},
-		    xAxis = d3.axisBottom().scale(xScale).ticks(studentIds.length);
+//       var xValue = function(d) { return xVal;}, 
+// 		    xScale = d3.scaleLinear().range([1, widthActions]), 
+// 		    xMap = function(d) { return xScale(xVal +0.5);},
+// 		    xAxis = d3.axisBottom().scale(xScale).ticks(studentIds.length);
 
-	console.log("len",studentIds.length)
-		// setup y
-		var yValue = function(d) { return d["seq"];}, 
-		    yScale = d3.scaleLinear().range([heightActions, 0]), 
-		    yMap = function(d) { return yScale(yValue(d));}, 
-		    yAxis = d3.axisLeft().scale(yScale);
+// 	console.log("len",studentIds.length)
+// 		// setup y
+// 		var yValue = function(d) { return d["seq"];}, 
+// 		    yScale = d3.scaleLinear().range([heightActions, 0]), 
+// 		    yMap = function(d) { return yScale(yValue(d));}, 
+// 		    yAxis = d3.axisLeft().scale(yScale);
 
-			xScale.domain([0,studentIds.length]);
-	 		// yScale.domain([d3.min(sepActions_data, yValue), d3.max(sepActions_data, yValue)+1]);
-	 		yScale.domain([d3.min(sepActions_data, yValue), 200]);
-	 		//yScale.domain([d3.min(sepActions_data, yValue), 200]);
+// 			xScale.domain([0,studentIds.length]);
+// 	 		// yScale.domain([d3.min(sepActions_data, yValue), d3.max(sepActions_data, yValue)+1]);
+// 	 		yScale.domain([d3.min(sepActions_data, yValue), 200]);
+// 	 		//yScale.domain([d3.min(sepActions_data, yValue), 200]);
 
-	 		// var xAxis = d3.axisBottom(xScale);
-	 		// var yAxis = d3.axisLeft(yScale);
+// 	 		// var xAxis = d3.axisBottom(xScale);
+// 	 		// var yAxis = d3.axisLeft(yScale);
 
-		 		// draw legend
-		  var legend = svg5.selectAll(".legend")
-		      .data(actionColor.domain())
-		    .enter().append("g")
-		      .attr("class", "legend")
-		      .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+// 		 		// draw legend
+// 		  var legend = svg5.selectAll(".legend")
+// 		      .data(actionColor.domain())
+// 		    .enter().append("g")
+// 		      .attr("class", "legend")
+// 		      .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
 
-		  // draw legend colored rectangles
-		  legend.append("rect")
-		      .attr("x", widthActions + 70)
-		      .attr("width", 18)
-		      .attr("height", 18)
-		      .style("fill", actionColor);
+// 		  // draw legend colored rectangles
+// 		  legend.append("rect")
+// 		      .attr("x", widthActions + 70)
+// 		      .attr("width", 18)
+// 		      .attr("height", 18)
+// 		      .style("fill", actionColor);
 
-		  // draw legend text
-		  legend.append("text")
-		      .attr("x", widthActions + 65)
-		      .attr("y", 9)
-		      .attr("dy", ".35em")
-		      .style("text-anchor", "end")
-		      .text(function(d) { if(d!= "None"){return d;}})
+// 		  // draw legend text
+// 		  legend.append("text")
+// 		      .attr("x", widthActions + 65)
+// 		      .attr("y", 9)
+// 		      .attr("dy", ".35em")
+// 		      .style("text-anchor", "end")
+// 		      .text(function(d) { if(d!= "None"){return d;}})
 
-		 // add the tooltip area to the webpage
-		var tooltip = d3.select("body").append("div")
-	    .attr("class", "tooltip")
-	    .style("opacity", 0);
+// 		 // add the tooltip area to the webpage
+// 		var tooltip = d3.select("body").append("div")
+// 	    .attr("class", "tooltip")
+// 	    .style("opacity", 0);
 
-	    var g = svg5.append("g")
-	    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+// 	    var g = svg5.append("g")
+// 	    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-	    if(xVal == studentIds.length-1){
-	    	var x = d3.scaleBand()
-		    .domain(studentIds)
-		    .range([1, widthActions]);
+// 	    if(xVal == studentIds.length-1){
+// 	    	var x = d3.scaleBand()
+// 		    .domain(studentIds)
+// 		    .range([1, widthActions]);
 
-		    var xAxis = d3.axisBottom()
-		    .scale(x).ticks(studentIds.length+1);
-			g.append("g")
-			         .call(xAxis)
-			         .attr("transform", "translate(0," + heightActions + ")");
-			     g.append("g")
-			         .call(yAxis)
+// 		    var xAxis = d3.axisBottom()
+// 		    .scale(x).ticks(studentIds.length+1);
+// 			g.append("g")
+// 			         .call(xAxis)
+// 			         .attr("transform", "translate(0," + heightActions + ")");
+// 			     g.append("g")
+// 			         .call(yAxis)
 	     
-	    }
+// 	    }
 	     
 
-		 g.selectAll(".dot")
-	      .data(sepActions_data)
-	    .enter().append("circle")
-	      .attr("class", "dot")
-	      .attr("r", 3.5)
-	      .attr("cx", xMap)
-	      .attr("cy", yMap)
-	      .style("fill", function(d) { return actionColor(d[student]);})
+// 		 g.selectAll(".dot")
+// 	      .data(sepActions_data)
+// 	    .enter().append("circle")
+// 	      .attr("class", "dot")
+// 	      .attr("r", 3.5)
+// 	      .attr("cx", xMap)
+// 	      .attr("cy", yMap)
+// 	      .style("fill", function(d) { return actionColor(d[student]);})
 
-}
-    
-  
+// }
+   
+ function populateActionView(student,xVal, studentIds){
+
+ }
       
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  var margin = {top: 50, right: 50, bottom: 100, left: 50},
-    widthActions = 600 - margin.left - margin.right,
-    heightActions = 900 - margin.top - margin.bottom;
+  // var margin = {top: 50, right: 50, bottom: 100, left: 50},
+  //   // widthActions = 600 - margin.left - margin.right,
+  //   // heightActions = 600 - margin.top - margin.bottom;
 
-    var svg5 = d3.select("body").append("svg")
-    	.attr("width", widthActions + margin.left + margin.right)
-    	.attr("height", heightActions + margin.top + margin.bottom)
+  //   var svg5 = d3.select("#actions").append("svg")
+  // //   	.attr("width", widthActions + margin.left + margin.right)
+  //   	.attr("height", heightActions + margin.top + margin.bottom)
 
-  	var svg3 = d3.select("body").append("svg")
-    	.attr("width", width + margin.left + margin.right)
-    	.attr("height", height + margin.top + margin.bottom)
 
-  		
+
 
   
    // var svg4 = d3.select("body").append("svg")
